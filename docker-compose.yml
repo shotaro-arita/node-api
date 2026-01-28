@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: node_api
+    ports:
+      - "5432:5432"
+    volumes:
+      - node_api_pg:/var/lib/postgresql/data
+
+volumes:
+  node_api_pg:
