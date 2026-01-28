@@ -1,0 +1,12 @@
+# node
+node_modules/
+dist/
+
+# env
+.env
+
+# prisma generated
+src/generated/
+
+# logs
+npm-debug.log*
