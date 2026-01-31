@@ -1,5 +1,6 @@
 import { AppError } from '../lib/errors'
 import { UserRepo } from '../repositories/userRepo'
+import { Role } from '../types/user'
 
 export class UserService {
   constructor(private userRepo: UserRepo) {}
@@ -17,6 +18,12 @@ export class UserService {
 
   async getById(id: string) {
     const user = await this.userRepo.findById(id)
+    if (!user) throw new AppError(404, 'User not found')
+    return { id: user.id, email: user.email, name: user.name, role: user.role, createdAt: user.createdAt }
+  }
+
+  async updateById(id: string, input: { name?: string; role?: Role }) {
+    const user = await this.userRepo.updateById(id, input)
     if (!user) throw new AppError(404, 'User not found')
     return { id: user.id, email: user.email, name: user.name, role: user.role, createdAt: user.createdAt }
   }

@@ -6,6 +6,7 @@ export interface UserRepo {
   findById(id: string): Promise<User | null>
   list(): Promise<User[]>
   create(user: User): Promise<User>
+  updateById(id: string, input: { name?: string; role?: User['role'] }): Promise<User | null>
   deleteById(id: string): Promise<boolean>
 }
 
@@ -71,6 +72,28 @@ export class PrismaUserRepo implements UserRepo {
     }
   }
 
+  async updateById(id: string, input: { name?: string; role?: User['role'] }) {
+    try {
+      const u = await prisma.user.update({
+        where: { id },
+        data: {
+          name: input.name,
+          role: input.role,
+        },
+      })
+      return {
+        id: u.id,
+        email: u.email,
+        name: u.name,
+        role: u.role as any,
+        passwordHash: u.passwordHash,
+        createdAt: u.createdAt,
+      }
+    } catch {
+      return null
+    }
+  }
+
   async deleteById(id: string) {
     try {
       await prisma.user.delete({ where: { id } })
@@ -100,6 +123,19 @@ export class InMemoryUserRepo implements UserRepo {
   async create(user: User) {
     this.users.push(user)
     return user
+  }
+
+  async updateById(id: string, input: { name?: string; role?: User['role'] }) {
+    const idx = this.users.findIndex((u) => u.id === id)
+    if (idx === -1) return null
+    const current = this.users[idx]
+    const updated = {
+      ...current,
+      name: input.name ?? current.name,
+      role: input.role ?? current.role,
+    }
+    this.users[idx] = updated
+    return updated
   }
 
   async deleteById(id: string) {

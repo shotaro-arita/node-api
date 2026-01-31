@@ -17,6 +17,7 @@ export function buildRoutes(deps: { auth: AuthController; users: UserController 
   // admin only
   router.get('/users', requireAuth, requireRole('admin'), asyncHandler(deps.users.list))
   router.get('/users/:id', requireAuth, requireRole('admin'), asyncHandler(deps.users.getById))
+  router.patch('/users/:id', requireAuth, requireRole('admin'), asyncHandler(deps.users.updateById))
   router.delete('/users/:id', requireAuth, requireRole('admin'), asyncHandler(deps.users.deleteById))
 
   return router
