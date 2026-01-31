@@ -117,4 +117,29 @@ describe('users', () => {
     expect(deleteRes.status).toBe(200)
     expect(deleteRes.body.deleted).toBe(true)
   })
+
+  it('allows admin to update a user by id', async () => {
+    const app = buildApp()
+    const adminToken = await registerAndLogin(app, {
+      email: 'admin@example.com',
+      name: 'Admin',
+      password: 'password123',
+    })
+
+    const register = await request(app).post('/auth/register').send({
+      email: 'user@example.com',
+      name: 'User',
+      password: 'password123',
+    })
+    const userId = register.body.user.id as string
+
+    const res = await request(app)
+      .patch(`/users/${userId}`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ name: 'Updated User', role: 'admin' })
+
+    expect(res.status).toBe(200)
+    expect(res.body.name).toBe('Updated User')
+    expect(res.body.role).toBe('admin')
+  })
 })
