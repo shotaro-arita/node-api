@@ -8,3 +8,7 @@ export const updateUserSchema = z
   .refine((v) => v.name !== undefined || v.role !== undefined, {
     message: 'At least one field must be provided',
   })
+
+export const userIdParamSchema = z.object({
+  id: z.string().trim().min(1),
+})
