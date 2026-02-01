@@ -142,4 +142,20 @@ describe('users', () => {
     expect(res.body.name).toBe('Updated User')
     expect(res.body.role).toBe('admin')
   })
+
+  it('returns 400 for invalid user id param', async () => {
+    const app = buildApp()
+    const adminToken = await registerAndLogin(app, {
+      email: 'admin@example.com',
+      name: 'Admin',
+      password: 'password123',
+    })
+
+    const res = await request(app)
+      .get('/users/%20%20%20')
+      .set('Authorization', `Bearer ${adminToken}`)
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toBe('Validation Error')
+  })
 })
